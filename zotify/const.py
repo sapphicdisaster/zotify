@@ -112,4 +112,5 @@ EXT_MAP = {
     'ogg': 'ogg',
     'opus': 'ogg',
     'vorbis': 'ogg',
+    'flac': 'flac',
 }

@@ -118,8 +118,10 @@ class Config:
         # Override config from commandline arguments
 
         for key in CONFIG_VALUES:
-            if key.lower() in vars(args) and vars(args)[key.lower()] is not None:
-                cls.Values[key] = cls.parse_arg_value(key, vars(args)[key.lower()])
+            if key.lower() in vars(args):
+                value = vars(args)[key.lower()]
+                if value is not None:
+                    cls.Values[key] = cls.parse_arg_value(key, value)
 
         if args.no_splash:
             cls.Values[PRINT_SPLASH] = False

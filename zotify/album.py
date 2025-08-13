@@ -47,8 +47,11 @@ def download_album(album):
     """ Downloads songs from an album """
     artist, album_name = get_album_name(album)
     tracks = get_album_tracks(album)
-    for n, track in Printer.progress(enumerate(tracks, start=1), unit_scale=True, unit='Song', total=len(tracks)):
-        download_track('album', track[ID], extra_keys={'album_num': str(n).zfill(2), 'artist': artist, 'album': album_name, 'album_id': album}, disable_progressbar=True)
+    total_tracks = len(tracks)
+    for n, track in Printer.progress(enumerate(tracks, start=1), unit_scale=True, unit='Song', total=total_tracks):
+        # Add track number out of total tracks to song name
+        extra_keys = {'album_num': str(n).zfill(2), 'artist': artist, 'album': album_name, 'album_id': album, 'track_count': f'{n}/{total_tracks}'}
+        download_track('album', track[ID], extra_keys=extra_keys, disable_progressbar=False)
 
 
 def download_artist_albums(artist):

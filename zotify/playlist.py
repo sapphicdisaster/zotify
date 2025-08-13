@@ -50,11 +50,14 @@ def download_playlist(playlist):
     """Downloads all the songs from a playlist"""
 
     playlist_songs = [song for song in get_playlist_songs(playlist[ID]) if song[TRACK] is not None and song[TRACK][ID]]
-    p_bar = Printer.progress(playlist_songs, unit='song', total=len(playlist_songs), unit_scale=True)
+    total_tracks = len(playlist_songs)
+    p_bar = Printer.progress(playlist_songs, unit='song', total=total_tracks, unit_scale=True)
     enum = 1
     for song in p_bar:
-        download_track('extplaylist', song[TRACK][ID], extra_keys={'playlist': playlist[NAME], 'playlist_num': str(enum).zfill(2)}, disable_progressbar=True)
-        p_bar.set_description(song[TRACK][NAME])
+        extra_keys = {'playlist': playlist[NAME], 'playlist_num': str(enum).zfill(2), 'track_count': f'{enum}/{total_tracks}'}
+        download_track('extplaylist', song[TRACK][ID], extra_keys=extra_keys, disable_progressbar=False)
+        # Optionally update the description to show track number out of total
+        p_bar.set_description(f"{song[TRACK][NAME]} ({enum}/{total_tracks})")
         enum += 1
 
 

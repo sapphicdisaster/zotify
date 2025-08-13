@@ -17,6 +17,8 @@ class Zotify:
     CONFIG: Config = Config()
 
     def __init__(self, args):
+        # Store args globally for debug flag access
+        Zotify.ARGS = args
         Zotify.CONFIG.load(args)
         Zotify.login(args)
 
