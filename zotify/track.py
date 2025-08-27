@@ -105,7 +105,7 @@ def get_song_genres(rawartists: List[str], track_name: str) -> List[str]:
 
 
 def get_song_lyrics(song_id: str, file_save: str) -> None:
-    raw, lyrics = Zotify.invoke_url(f'https://spclient.wg.spotify.com/color-lyrics/v2/track/{song_id}')
+    raw, lyrics = Zotify.invoke_url(f'https://spclient.wg.spotify.com/color-lyrics/v2/track/{song_id}?format=json&vocalRemoval=false')
 
     if lyrics:
         try:
@@ -146,7 +146,14 @@ def download_track(mode: str, track_id: str, extra_keys=None, disable_progressba
     """ Downloads raw song audio from Spotify """
     # Fetch song info and set up variables
     artists, raw_artists, album_name, name, image_url, release_year, disc_number, track_number, scraped_song_id, is_playable, duration_ms = get_song_info(track_id)
+    # Add track count to progress bar description if available
+    track_count_desc = ""
+    if extra_keys and isinstance(extra_keys, dict):
+        track_count = extra_keys.get('track_count')
+        if track_count and "/" in track_count:
+            track_count_desc = f" ({track_count})"
     song_name = fix_filename(f"{artists[0]} - {name}")
+    progress_desc = f"{artists[0]} - {name}{track_count_desc}"
     root_path = Zotify.CONFIG.get_root_path()
     filedir = str(PurePath(root_path).joinpath(artists[0], album_name))
     create_download_directory(filedir)
@@ -181,7 +188,7 @@ def download_track(mode: str, track_id: str, extra_keys=None, disable_progressba
         time_start = time.time()
         downloaded = 0
         with open(filename_temp, 'wb') as file, Printer.progress(
-            desc=song_name,
+            desc=progress_desc,
             total=total_size,
             unit='B',
             unit_scale=True,
@@ -239,9 +246,18 @@ def download_track(mode: str, track_id: str, extra_keys=None, disable_progressba
         except ValueError:
             rel_path = Path(filename)
 
-    Printer.print(PrintChannel.DOWNLOADS, f'###   Downloaded "{song_name}" to "{rel_path}" in {fmt_seconds(time_downloaded - time_start)} (plus {fmt_seconds(time_finished - time_downloaded)} converting)   ###' + "\n")
+    # Show track number if provided and multiple tracks are being downloaded
+    track_count_str = ""
+    if extra_keys and isinstance(extra_keys, dict):
+        track_count = extra_keys.get('track_count')
+        if track_count and "/" in track_count:
+            track_count_str = f" (Track {track_count})"
+    Printer.print(
+        PrintChannel.DOWNLOADS,
+        f'###   Downloaded "{song_name}"{track_count_str} to "{rel_path}" in {fmt_seconds(time_downloaded - time_start)} (plus {fmt_seconds(time_finished - time_downloaded)} converting)   ###' + "\n"
+    )
     # Always show the absolute path to the output file for user clarity
-    Printer.print(PrintChannel.DOWNLOADS, f'###   Output file absolute path: {Path(filename).absolute()}   ###')
+    #Printer.print(PrintChannel.DOWNLOADS, f'###   Output file absolute path: {Path(filename).absolute()}   ###')
 
     # add song id to archive file
     if Zotify.CONFIG.get_skip_previously_downloaded():

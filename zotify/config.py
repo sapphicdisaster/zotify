@@ -45,7 +45,7 @@ CONFIG_VALUES = {
     ROOT_PATH:                  { 'default': '',      'type': str,  'arg': '--root-path'                  },
     ROOT_PODCAST_PATH:          { 'default': '',      'type': str,  'arg': '--root-podcast-path'          },
     SPLIT_ALBUM_DISCS:          { 'default': 'False', 'type': bool, 'arg': '--split-album-discs'          },
-    DOWNLOAD_LYRICS:            { 'default': 'True',  'type': bool, 'arg': '--download-lyrics'            },
+    DOWNLOAD_LYRICS:            { 'default': 'False',  'type': bool, 'arg': '--download-lyrics'            },
     MD_SAVE_GENRES:             { 'default': 'False', 'type': bool, 'arg': '--md-save-genres'             },
     MD_ALLGENRES:               { 'default': 'False', 'type': bool, 'arg': '--md-allgenres'               },
     MD_GENREDELIMITER:          { 'default': ',',     'type': str,  'arg': '--md-genredelimiter'          },
